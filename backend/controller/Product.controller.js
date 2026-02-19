@@ -1,4 +1,4 @@
-import Product from '../models/product.model.js';
+import Product from '../models/entry.model.js';
 
 export const addProduct = async(req,res) =>{
     // console.log('New Request comes')
