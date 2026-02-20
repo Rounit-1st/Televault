@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
-const EntrySchema = new mongoose.Schema(
+const FolderSchema = new mongoose.Schema(
     {
         name:{
             type:String,
@@ -10,7 +10,32 @@ const EntrySchema = new mongoose.Schema(
             type:Boolean,
             required:true
         },
-        image:{
+        path:{
+            type:String,
+            required:true
+        },
+        updatedAt: {
+            type:timestamps,
+            required:true
+        }
+    }
+)
+
+const FileSchema = new mongoose.Schema(
+    {
+        name:{
+            type:String,
+            required:true
+        },
+        isFolder:{
+            type:Boolean,
+            required:true
+        },
+        downloadLink:{
+            type:URL,
+            required: true
+        },
+        fileId:{
             type:String,
             required: true
         },
@@ -25,6 +50,7 @@ const EntrySchema = new mongoose.Schema(
     }
 )
 
-const Entry = mongoose.model('Product', EntrySchema) //remember the product name should start with captital letter and must be singular so mongo internall does convert objects into products
+const Folder = mongoose.model('Folder', FolderSchema) //remember the product name should start with captital letter and must be singular so mongo internall does convert objects into products
+const File = mongoose.model('File', FileSchema)
 
-export default Entry;
+export {Folder,File};

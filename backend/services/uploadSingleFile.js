@@ -1,13 +1,12 @@
 import axios from "axios";
 
 const uploadSingleFile = async(form, BOT_TOKEN)=>{
-    
-    
+    console.log(BOT_TOKEN,form.getHeaders)
     // Step 1: Upload Document to Telegram
     const uploadResponse = await axios.post(
         `https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`,
         form,
-        { headers: form.getHeaders() }
+        { headers: form.getHeaders }
     );
 
     console.log("lol",uploadResponse)

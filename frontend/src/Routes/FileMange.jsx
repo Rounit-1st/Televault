@@ -1,17 +1,35 @@
-import Navbar from "../Components/Navbar";
-import Hero from "../Components/Hero";
-import ExtraDetails from "../Components/extraDetails";
-import Footer from "../Components/Footer";
+import { useState } from "react";
+import { FileManager } from "@cubone/react-file-manager";
+import "@cubone/react-file-manager/dist/style.css";
 
-export default function FileManage(){
-    return (
-       <>
-       <Navbar/>
-       <div className="h-lvh grid grid-cols-1 md:grid-cols-2 gap-2">
-            <div className="bg-green-300 ">First Div</div>
-            <div className="bg-green-300">Seconde Div</div>
-       </div>
-       <Footer/>
-       </>
-    )
+function FileManage() {
+  const [files, setFiles] = useState([
+    {
+      name: "Documents",
+      isDirectory: true, // Folder
+      path: "/Documents", // Located in Root directory
+      updatedAt: "2024-09-09T10:30:00Z", // Last updated time
+    },
+    {
+      name: "Pictures",
+      isDirectory: true,
+      path: "/Pictures", // Located in Root directory as well
+      updatedAt: "2024-09-09T11:00:00Z",
+    },
+    {
+      name: "Pic.png",
+      isDirectory: false, // File
+      path: "/Pictures/Pic.png", // Located inside the "Pictures" folder
+      updatedAt: "2024-09-08T16:45:00Z",
+      size: 2048, // File size in bytes (example: 2 KB)
+    },
+  ]);
+
+  return (
+    <>
+      <FileManager files={files} />
+    </>
+  );
 }
+
+export default FileManage;

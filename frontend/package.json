@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cubone/react-file-manager": "^1.35.0",
     "@tailwindcss/vite": "^4.1.11",
-    "dotenv": "^17.3.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.7.0",

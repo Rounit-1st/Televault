@@ -11,25 +11,25 @@ dotenv.config()
 const testRouter = Router();
 
 // Temp file storage
-const upload = multer({ dest: 'uploads/' });
+const temp = multer({ dest: 'temp/' });
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 
-testRouter.post('/', upload.single('file'), async (req, res) => {
+testRouter.post('/', temp.single('file'), async (req, res) => {
 
-    //Temp file created
     try{
         if (!req.file) {
             return res.status(400).json({ error: "No file uploaded" });
         }
 
+        //Temp file created
         const filePath = req.file.path;
 
         const form = new FormData();
         form.append("chat_id", CHAT_ID);
         form.append("document", fs.createReadStream(filePath));
-
+        console.log('file start', form)
         const {downloadUrl,fileId} = await uploadSingleFile(form, BOT_TOKEN)
 
         fs.unlinkSync(filePath);

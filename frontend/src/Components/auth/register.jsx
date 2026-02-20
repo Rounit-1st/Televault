@@ -2,6 +2,24 @@ import { useState } from "react";
 
 export default function Register({switchMode}){
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState();
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+        setLoading(true);
+        setError("");
+
+        try {
+            await sendRegisterationCredentials({
+                email: e.target.inputMail.value,
+                password: e.target.password.value,
+            });
+        } catch (err) {
+            setError(err.message);
+        }
+
+        setLoading(false);
+    }
 
     return (
         <form action="" className="flex flex-col items-center m-4 p-4 sm:m-16 sm:p-16 border rounded-4xl h-fit">
@@ -16,7 +34,7 @@ export default function Register({switchMode}){
             >{loading ? 'Loading ...': 'Sign In'}
             </button>
             <span className="underline cursor-pointer" onClick={()=>{switchMode('Login');}}>Login</span>
-            {/* <span className="red-500">{errorMessage}</span> */}
+            <span className="red-500">{errorMessage}</span>
         </form>
     )
 }

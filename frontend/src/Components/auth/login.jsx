@@ -11,7 +11,7 @@ export default function Login({switchMode}){
         setError("");
 
         try {
-            await sendCredentials({
+            await sendLoginCredentials({
                 email: e.target.inputMail.value,
                 password: e.target.password.value,
             });
