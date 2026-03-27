@@ -1,9 +1,11 @@
 import { useState } from "react";
+import {sendLoginCredential} from '../../api/auth_api';
 
 
 export default function Login({switchMode}){
 
     const [loading, setLoading]=useState(false)
+    const [error, setError] = useState('')
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -11,7 +13,7 @@ export default function Login({switchMode}){
         setError("");
 
         try {
-            await sendLoginCredentials({
+            await sendLoginCredential({
                 email: e.target.inputMail.value,
                 password: e.target.password.value,
             });
@@ -35,7 +37,7 @@ export default function Login({switchMode}){
             >{loading?'loading...':'Login'}
             </button>
             <span className="underline cursor-pointer" onClick={()=>{switchMode('Register')}}>Register</span>
-            {/* <span className="red-500">{errorMessage}</span> */}
+            <span className="sm">{error}</span>
         </form>
     )
 }

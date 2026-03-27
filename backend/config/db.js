@@ -8,6 +8,6 @@ export const connectToDatabase = async () => {
     }
     catch(error){
         console.error(`Error: ${error.message}`);
-        process.exit(1) // 1 code means exit with failure 0 means sucess
+        // process.exit(1) // 1 code means exit with failure 0 means success
     }
 };

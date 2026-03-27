@@ -1,7 +1,7 @@
-# cd frontend
-# npm i 
-# npm run dev
-# cd ..
+cd frontend
+npm i 
+npm run dev
+cd ..
 
 cd backend
 npm i 

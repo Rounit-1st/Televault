@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { sendSignInCredential } from "../../api/auth_api";
 
 export default function Register({switchMode}){
     const [loading, setLoading] = useState(false);
@@ -10,7 +11,7 @@ export default function Register({switchMode}){
         setError("");
 
         try {
-            await sendRegisterationCredentials({
+            await sendSignInCredential({
                 email: e.target.inputMail.value,
                 password: e.target.password.value,
             });

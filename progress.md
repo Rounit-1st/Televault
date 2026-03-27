@@ -85,3 +85,9 @@ How to run
 Add screenshots or screen recording (Loom, OBS)
 
 Push to GitHub
+
+
+new error encountered
+
+Server is running at http://localhost:3000
+Error: querySrv ESERVFAIL _mongodb._tcp.cluster0.naxyfuw.mongodb.net

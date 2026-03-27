@@ -13,8 +13,7 @@ const testRouter = Router();
 // Temp file storage
 const temp = multer({ dest: 'temp/' });
 
-const BOT_TOKEN = process.env.BOT_TOKEN;
-const CHAT_ID = process.env.CHAT_ID;
+
 
 testRouter.post('/', temp.single('file'), async (req, res) => {
 
