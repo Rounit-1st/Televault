@@ -13,7 +13,19 @@ const UserSchema = new mongoose.Schema(
         },
         telegramApi:{
             type:String,
-            // required:true
+            default: ''
+        },
+        telegramBotToken: {
+            type: String,
+            default: ''
+        },
+        telegramChatIds: {
+            type: [String],
+            default: []
+        },
+        telegramChatId: {
+            type: String,
+            default: ''
         },
         updatedAt: {
              type: Date,

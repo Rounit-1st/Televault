@@ -2,55 +2,144 @@ import { User } from "../models/user.model.js";
 
 const setTelegramApi = async(req,res)=>{
     const id = req.id.id;
-    const {telegramApi} = req.body;
-    console.log("id",id," telegram api: ", telegramApi);
-    if(!telegramApi)return res.status(400).json({success:false,message:"Please enter api keys"})
+    const { telegramBotToken, telegramChatId, telegramChatIds, telegramApi } = req.body;
+
+    if ((!telegramBotToken || (!telegramChatId && !telegramChatIds)) && !telegramApi) {
+        return res.status(400).json({success:false,message:"Please provide telegramBotToken + telegramChatId(s) or telegramApi"});
+    }
+
+    let update = {};
+    let chatIds = [];
+
+    if (telegramBotToken && (telegramChatId || telegramChatIds)) {
+        if (telegramChatIds && Array.isArray(telegramChatIds)) {
+            chatIds = telegramChatIds.map(id => id.trim()).filter(Boolean);
+        } else if (telegramChatId) {
+            chatIds = String(telegramChatId).split(',').map(id => id.trim()).filter(Boolean);
+        }
+
+        update = {
+            telegramBotToken: telegramBotToken.trim(),
+            telegramChatIds: chatIds,
+            telegramChatId: chatIds[0] || '',
+            telegramApi: `${telegramBotToken.trim()}:${chatIds.join(',')}`
+        };
+    } else if (telegramApi) {
+        const parts = telegramApi.split(':');
+        if (parts.length < 2) {
+            return res.status(400).json({success:false,message:"Invalid telegramApi format. Expected botToken:chatId"});
+        }
+        const token = parts[0].trim();
+        const ch = parts.slice(1).join(':').trim();
+        const providedChatIds = ch.includes(',') ? ch.split(',').map(id => id.trim()).filter(Boolean) : [ch];
+
+        chatIds = providedChatIds;
+
+        update = {
+            telegramApi: telegramApi.trim(),
+            telegramBotToken: token,
+            telegramChatIds: chatIds,
+            telegramChatId: chatIds[0] || ''
+        };
+    }
 
     try{
-        await User.findByIdAndUpdate(id,{telegramApi});
-        return res.status(200).json({success:true,message:"telegram api keys successfully added"})
+        await User.findByIdAndUpdate(id, update);
+        return res.status(200).json({success:true,message:"telegram api keys successfully added"});
     }catch(err){
-        return res.status(400).json({success:false,message:"Internal server error"})
+        console.error('setTelegramApi error', err);
+        return res.status(500).json({success:false,message:"Internal server error"});
     }
 }
 
 const updateTelegramApi = async(req,res)=>{
     const id = req.id.id;
-    const {telegramApi} = req.body;
+    const { telegramBotToken, telegramChatId, telegramChatIds, telegramApi } = req.body;
 
-    if(!telegramApi)return res.status(400).json({success:false,message:"Please enter api keys"})
-        
+    if ((!telegramBotToken || (!telegramChatId && !telegramChatIds)) && !telegramApi) {
+        return res.status(400).json({success:false,message:"Please provide telegramBotToken + telegramChatId(s) or telegramApi"});
+    }
+
+    let update = {};
+    let chatIds = [];
+
+    if (telegramBotToken && (telegramChatId || telegramChatIds)) {
+        if (telegramChatIds && Array.isArray(telegramChatIds)) {
+            chatIds = telegramChatIds.map(id => id.trim()).filter(Boolean);
+        } else if (telegramChatId) {
+            chatIds = String(telegramChatId).split(',').map(id => id.trim()).filter(Boolean);
+        }
+
+        update = {
+            telegramBotToken: telegramBotToken.trim(),
+            telegramChatIds: chatIds,
+            telegramChatId: chatIds[0] || '',
+            telegramApi: `${telegramBotToken.trim()}:${chatIds.join(',')}`
+        };
+    } else if (telegramApi) {
+        const parts = telegramApi.split(':');
+        if (parts.length < 2) {
+            return res.status(400).json({success:false,message:"Invalid telegramApi format. Expected botToken:chatId"});
+        }
+        const token = parts[0].trim();
+        const ch = parts.slice(1).join(':').trim();
+        const providedChatIds = ch.includes(',') ? ch.split(',').map(id => id.trim()).filter(Boolean) : [ch];
+
+        chatIds = providedChatIds;
+
+        update = {
+            telegramApi: telegramApi.trim(),
+            telegramBotToken: token,
+            telegramChatIds: chatIds,
+            telegramChatId: chatIds[0] || ''
+        };
+    }
+
     try{
-        await User.findByIdAndUpdate(id,{telegramApi});
-        return res.status(200).json({success:true,message:"telegram api keys successfully updated"})
+        await User.findByIdAndUpdate(id, update);
+        return res.status(200).json({success:true,message:"telegram api keys successfully updated"});
     }catch(err){
-        return res.status(400).json({success:false,message:"Internal server error"})
+        console.error('updateTelegramApi error', err);
+        return res.status(500).json({success:false,message:"Internal server error"});
     }
 }
 
 const removeTelegramApi = async(req,res)=>{
     const id = req.id.id;
-    const telegramApi = "";
-        
     try{
-        const object = await User.findByIdAndUpdate(id,{telegramApi},{new:true});
-        return res.status(200).json({success:true,message:"Successfully cleared Api keys"})
+        await User.findByIdAndUpdate(id, {
+            telegramApi: '',
+            telegramBotToken: '',
+            telegramChatId: '',
+            telegramChatIds: []
+        }, {new:true});
+
+        return res.status(200).json({success:true,message:"Successfully cleared Api keys"});
     }catch(err){
-        return res.status(400).json({success:false,message:"Internal server error"})
+        console.error('removeTelegramApi error', err);
+        return res.status(500).json({success:false,message:"Internal server error"});
     }
 }
 
 const getTelegramApi = async(req,res)=>{
     const id = req.id.id;
-    // const {telegramApi} = "";
 
-    // if(!telegramApi)return res.status(400).json({success:false,message:"Api key feild is already empty"})
-        
     try{
-        const userDetails = await User.findByIdAndUpdate(id);
-        return res.status(200).json({success:true, telegramApi: userDetails.telegramApi})
+        const userDetails = await User.findById(id);
+        if (!userDetails) {
+            return res.status(404).json({ success:false, message: 'User not found' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            telegramApi: userDetails.telegramApi,
+            telegramBotToken: userDetails.telegramBotToken,
+            telegramChatIds: userDetails.telegramChatIds,
+            telegramChatId: userDetails.telegramChatId
+        });
     }catch(err){
-        return res.status(400).json({success:false,message:"Internal server error"})
+        console.error('getTelegramApi error', err);
+        return res.status(500).json({success:false,message:"Internal server error"});
     }
 }
 
