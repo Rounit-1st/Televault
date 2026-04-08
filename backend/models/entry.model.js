@@ -14,6 +14,11 @@ const FolderSchema = new mongoose.Schema(
             type:String,
             required:true
         },
+        owner:{
+             type:mongoose.Schema.Types.ObjectId,
+            ref:'User',
+            required: true
+        },
         updatedAt: {
             type:timestamps,
             required:true
@@ -27,16 +32,29 @@ const FileSchema = new mongoose.Schema(
             type:String,
             required:true
         },
+        mimeType:{
+            type:String,
+            required:true
+        },
         isFolder:{
             type:Boolean,
             required:true
         },
-        downloadLink:{
+        downloadURL:{
             type:URL,
             required: true
         },
         fileId:{
             type:String,
+            required: true
+        },
+        size:{
+            type:Number,
+            required:true       
+        },
+        owner:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref:'User',
             required: true
         },
         path:{

@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { protect } from '../middleware/auth.middleware.js';
 import {setTelegramApi, updateTelegramApi, removeTelegramApi, getTelegramApi} from '../controller/telegramApiManage.controller.js'
 
 const telegramApiManageRouter = Router();
