@@ -1,30 +1,27 @@
 import mongoose, { mongo } from "mongoose";
 
-const FolderSchema = new mongoose.Schema(
-    {
-        name:{
-            type:String,
-            required:true
-        },
-        isFolder:{
-            type:Boolean,
-            required:true
-        },
-        path:{
-            type:String,
-            required:true
-        },
-        owner:{
-             type:mongoose.Schema.Types.ObjectId,
-            ref:'User',
-            required: true
-        },
-        updatedAt: {
-            type:timestamps,
-            required:true
-        }
-    }
-)
+// const FolderSchema = new mongoose.Schema(
+//     {
+//         name:{
+//             type:String,
+//             required:true
+//         },
+//         isFolder:{
+//             type:Boolean,
+//             required:true
+//         },
+//         path:{
+//             type:String,
+//             required:true
+//         },
+//         owner:{
+//             type:mongoose.Schema.Types.ObjectId,
+//             ref:'User',
+//             required: true
+//         }
+//     },
+//     {timestamps: true}
+// )
 
 const FileSchema = new mongoose.Schema(
     {
@@ -44,7 +41,7 @@ const FileSchema = new mongoose.Schema(
             type:URL,
             required: true
         },
-        fileId:{
+        telegramFileId:{
             type:String,
             required: true
         },
@@ -61,14 +58,14 @@ const FileSchema = new mongoose.Schema(
             type:String,
             required:true
         },
-        updatedAt: {
-            type:timestamps,
-            required:true
+        thumbnailUrl:{
+            type:URL,
+            required:false
         }
-    }
+    },{timestamps: true}
 )
 
-const Folder = mongoose.model('Folder', FolderSchema) //remember the product name should start with captital letter and must be singular so mongo internall does convert objects into products
+// const Folder = mongoose.model('Folder', FolderSchema) //remember the product name should start with captital letter and must be singular so mongo internall does convert objects into products
 const File = mongoose.model('File', FileSchema)
 
-export {Folder,File};
+export {File};
