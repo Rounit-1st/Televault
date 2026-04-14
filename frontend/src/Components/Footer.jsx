@@ -12,6 +12,7 @@ export default function Footer(){
                <a href=""><img src="vite.svg " className="h-16"  alt="" /></a>
                <a href=""><img src="vite.svg " className="h-16"  alt="" /></a>
             </div>
+            vs code is fuck
        </section>
     )
 }
