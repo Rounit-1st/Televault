@@ -13,6 +13,7 @@ function App() {
       <Route path="/" element={<Home/>}/>
       <Route path="/home" element={<Home/>}/>
       <Route path="/filemanage" element={<FileManage/>}/>
+      <Route path="/telegramApiManage" element= {<></>} />
       <Route path="*" element={'Invalid Route'}/>
     </Routes>
   )
