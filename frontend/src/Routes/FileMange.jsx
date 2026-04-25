@@ -8,7 +8,7 @@ function FileManage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const path = searchParams.get("path") || "/";
+  const path = searchParams.get("path") ;
 
   useEffect(() => {
     async function fetchFiles() {
@@ -67,7 +67,7 @@ function FileManage() {
             size: file.size || 0,
             downloadUrl: file.downloadUrl || null,
           }));
-
+          setFiles([]);
           setFiles(formattedFiles);
         }
 
@@ -78,33 +78,76 @@ function FileManage() {
 
     fetchFiles();
   }, [path]);
+ 
 
   return (
     <div style={{ height: "100vh" }}>
-      <FileManager
-        enableFilePreview = {false}
-        onDownload={handleDownload}
-        onCut={(file) => {
-          alert("Cut not supported in this demo");
-        }} 
-        onCopy={(file) => {
-          alert("Copy not supported in this demo");
+     <FileManager
+      files={files}
+      height="100%"
+      initialPath={path ? path:"/"}
+      enableFilePreview={false}
+
+      uploadUrl={`${import.meta.env.VITE_BACKEND_URL}/filemanage/upload`}
+
+      onDownload={handleDownload}
+
+      onRename={async (file, newName) => {
+        await renameFile({
+          path: file.path,
+          newName,
+        });
+      }}
+      fileUploadConfig={{
+          url: `${import.meta.env.VITE_BACKEND_URL}/filemanage/upload`,
+          method: "POST",
+          withCredentials: true,
         }}
-        onRename={async (file, newName) => {
-          const res = await renameFile({ path: file.path, newName });
-        }}
-        files={files}
-        height="100%"
-        initialPath={"/"}
-        onFileOpen={(file) => {
-          if (file.isDirectory) {
-            navigate(`/filemanage?path=${file.path}`);
+      onFileUploading={(file, parentFolder) => {
+        console.log("Uploading:", file);
+        console.log("Parent Folder:", parentFolder);
+        console.log("Current Path:", path);
+
+        return {
+          path: parentFolder ? parentFolder.path : "/", // sent in FormData
+        };
+      }}
+      onFileUploaded={(response) => {
+          console.log("Uploaded response:", response);
+
+          try {
+            const uploadedFile =
+              typeof response === "string"
+                ? JSON.parse(response)
+                : response;
+
+            setFiles((prev) => [
+              ...prev,
+              {
+                name: uploadedFile.name,
+                isDirectory: false,
+                path: uploadedFile.path,
+                updatedAt:
+                  uploadedFile.updatedAt || new Date().toISOString(),
+                size: uploadedFile.size || 0,
+                downloadUrl: uploadedFile.downloadUrl || null,
+              },
+            ]);
+          } catch (err) {
+            console.error(err);
+            window.location.reload();
           }
-        }}
-        onUpload={(files) => {
-          
-        }}
-      />
+        }}  
+
+      onFileOpen={(file) => {
+        console.log("Opening:", file);
+        if (file.isDirectory) {
+          navigate(`/filemanage?path=${file.path}`);
+        }
+      }}
+
+      onCreateFolder={async (name, parentFolder) => {}}
+    />
     </div>
   );
 }
@@ -131,8 +174,8 @@ async function renameFile({ path, newName }) {
     alert(data.message || "Rename failed");
   }
 
-  return data;
   window.location.reload();
+  return data;
 }
 
 export const handleDownload = (file) => {
@@ -143,32 +186,4 @@ export const handleDownload = (file) => {
   }
 
   window.open(file[0].downloadUrl, "_blank");
-}
-
-export async function uploadFiles({ files, path }) {
-  const formData = new FormData();
-
-  // multiple files support
-  files.forEach((file) => {
-    formData.append("file", file); // backend key = "file"
-  });
-
-  formData.append("path", path);
-
-  const res = await fetch(
-    `${import.meta.env.VITE_BACKEND_URL}/filemanage/upload`,
-    {
-      method: "POST",
-      credentials: "include",
-      body: formData,
-    }
-  );
-
-  const data = await res.json();
-
-  if (!res.ok || data.success === false) {
-    throw new Error(data.message || "Upload failed");
-  }
-
-  return data;
 }

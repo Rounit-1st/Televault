@@ -24,7 +24,11 @@ const FileSchema = new mongoose.Schema({
     // file-only fields
     mimeType: String,
     path: String,
-    telegramFileId: String,
+    telegramFileId: {
+        type: String,
+        // unique: true,
+        sparse: true
+    },
     size: Number,
     downloadURL: String,
     thumbnailUrl: String

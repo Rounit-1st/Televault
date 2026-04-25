@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import {isTelegramApiExistForAccount} from '../middleware/tele.api.available.js'
 import multer from 'multer';
-import { uploadFile, viewFile, deleteFileOrFolder, renameFileOrFolder, moveFileOrFolder } from '../controller/fileManage.controller.js';   
+import { uploadFile, viewFile, deleteFileOrFolder, renameFileOrFolder, moveFileOrFolder, createFolder } from '../controller/fileManage.controller.js';   
 
 const fileManageRouter = Router()
 
@@ -21,5 +21,6 @@ fileManageRouter.post('/upload',isTelegramApiExistForAccount,upload.single('file
 fileManageRouter.get('/view',isTelegramApiExistForAccount,viewFile);
 fileManageRouter.delete('/delete',isTelegramApiExistForAccount,deleteFileOrFolder)
 fileManageRouter.put('/rename',isTelegramApiExistForAccount,renameFileOrFolder);
+fileManageRouter.post('/createFolder',isTelegramApiExistForAccount,createFolder);
 
 export default fileManageRouter;

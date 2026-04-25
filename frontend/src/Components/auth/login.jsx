@@ -31,7 +31,7 @@ export default function Login({ switchMode }) {
                 setSuccess("✅ Logged in successfully!");
 
                 setTimeout(() => {
-                    navigate("/filemanage");
+                    navigate("/filemanage?path=/");
                 }, 1000);
             } else {
                 setError(resData.message);

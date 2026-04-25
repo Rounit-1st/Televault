@@ -101,6 +101,7 @@ const _uploadAndSaveFile = async (
             type: "file",
             parent: parentId,
             owner: ownerId,
+            path:(path) ? path+"/"+name :"/",
 
             mimeType: mimetype,
             telegramFileId: fileId,
@@ -115,7 +116,7 @@ const _uploadAndSaveFile = async (
             file: {
                 name,
                 isDirectory: false,
-                path: path,
+                path: path ? path+"/"+name :"/",
                 updatedAt: fileDoc.updatedAt,
                 size,
                 fileId,
@@ -251,7 +252,7 @@ export const viewFile = async (req, res) => {
         })
         .select("name type updatedAt size path downloadURL telegramFileId")
         .lean();
-
+        console.log("ss",files);
         return res.status(200).json({
             success: true,
             files: files.map(f => ({
@@ -324,6 +325,63 @@ export const deleteFileOrFolder = async (req, res) => {
 
     } catch (err) {
         console.error("Delete error:", err);
+
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+export const createFolder = async (req, res) => {
+    const { path, name } = req.body;
+    const ownerId = req.id.id;
+
+    if (!name) {
+        return res.status(400).json({
+            success: false,
+            message: "Folder name is required"
+        });
+    }
+
+    try {
+        // 🔹 resolve parent (auto-create if missing)
+        const parentId = await resolvePathToParent(path, ownerId, true);
+
+        // 🔹 check duplicate
+        const exists = await File.findOne({
+            name: name,
+            parent: parentId,
+            owner: ownerId
+        });
+        
+        if (exists) {
+            return res.status(400).json({
+                success: false,
+                message: "Folder with this name already exists"
+            });
+        }
+        const something =  path ? path+'/'+name : `/${name}`;
+        console.log("something",something);
+
+        // 🔹 create folder
+        const newFolder = new File({
+            name: name,
+            type: "folder",
+            parent: parentId,
+            owner: ownerId,
+            path: path ? path+'/'+name : `/${name}`
+        });
+
+        await newFolder.save();
+
+        return res.status(201).json({
+            success: true,
+            message: "Folder created successfully"
+        });
+
+    } catch (err) {
+        console.error("Create folder error:", err);
 
         return res.status(500).json({
             success: false,
