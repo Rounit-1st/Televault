@@ -212,20 +212,19 @@ function FileManage() {
           }
         }}
         onCreateFolder={async (parentFolder, folderName) => {
-          try {
-            const parentPath = parentFolder?.path || path || "/";
+            try {
+                
+                const parentPath = parentFolder?.path || path || "/";
+console.log(parentFolder, folderName, parentPath);
+const name = parentFolder;
 
-            const fullPath =
-              parentPath === "/"
-                ? `/${folderName}`
-                : `${parentPath}/${folderName}`;
+                await createFolder( name,parentPath);
 
-            await createFolder(fullPath);
-
-            fetchFiles();
-          } catch (err) {
-            console.error(err);
-          }
+                await fetchFiles();
+            } catch (err) {
+                console.error("Create folder error:", err);
+                // setMessage("Something went wrong, please try again");
+            }
         }}
 
       />
@@ -269,6 +268,44 @@ export async function uploadFiles({ files, path }) {
   return data;
 }
 
+const createFolder = async (path, folderName) => {
+    try {
+        if (!folderName || !folderName.trim()) {
+            // setMessage("Folder name is required");
+            return;
+        }
+
+
+        const response = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/filemanage/createFolder?path=${encodeURIComponent(path || "/")}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    folderName,
+                }),
+            }
+        );
+
+        const data = await response.json();
+
+        // setMessage(data.message);
+
+        if (!data.success) {
+            return;
+        }
+
+        // success → optionally refresh files list here
+        console.log("Created Folder:", data.folder);
+
+    } catch (error) {
+        // setMessage("Something went wrong, please try again");
+    }
+};
+
 async function deleteFileOrFolder(path) {
   try {
     const res = await fetch(
@@ -293,32 +330,32 @@ async function deleteFileOrFolder(path) {
   }
 }
 
-async function createFolder(folderPath) {
-  try {
-    const res = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/filemanage/create-folder`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          path: folderPath,
-        }),
-      }
-    );
+// async function createFolder(folderPath) {
+//   try {
+//     const res = await fetch(
+//       `${import.meta.env.VITE_BACKEND_URL}/filemanage/create-folder`,
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         credentials: "include",
+//         body: JSON.stringify({
+//           path: folderPath,
+//         }),
+//       }
+//     );
 
-    const data = await res.json();
+//     const data = await res.json();
 
-    if (!res.ok || data.success === false) {
-      alert(data.message || "Folder creation failed");
-      throw new Error(data.message || "Folder creation failed");
-    }
+//     if (!res.ok || data.success === false) {
+//       alert(data.message || "Folder creation failed");
+//       throw new Error(data.message || "Folder creation failed");
+//     }
 
-    return data;
-  } catch (err) {
-    console.error("Create folder error:", err);
-    throw err;
-  }
-}
+//     return data;
+//   } catch (err) {
+//     console.error("Create folder error:", err);
+//     throw err;
+//   }
+// }

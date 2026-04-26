@@ -428,6 +428,77 @@ export const renameFileOrFolder = async (req, res) => {
     }
 };
 
+export const createFolder = async (req, res) => {
+    const path = req.query.path || "/";
+    const ownerId = req.id.id;
+    const { folderName } = req.body;
+
+    if (!folderName || !folderName.trim()) {
+        return res.status(400).json({
+            success: false,
+            message: "Folder name is required"
+        });
+    }
+
+    try {
+        // Resolve current path (parent folder)
+        const parentId = await resolvePathToParent(
+            path,
+            ownerId,
+            true
+        );
+
+        // Prevent duplicate folder in same location
+        const exists = await File.findOne({
+            name: folderName,
+            parent: parentId,
+            owner: ownerId,
+            type: "folder"
+        });
+
+        if (exists) {
+            return res.status(400).json({
+                success: false,
+                message: "Folder already exists"
+            });
+        }
+
+        // Build full folder path
+        const folderPath =
+            path === "/" || !path
+                ? `/${folderName}`
+                : `${path}/${folderName}`;
+
+        // Create folder
+        const folder = await File.create({
+            name: folderName,
+            type: "folder",
+            parent: parentId,
+            owner: ownerId,
+            path: folderPath
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Folder created successfully",
+            folder: {
+                name: folder.name,
+                isDirectory: true,
+                path: folder.path,
+                updatedAt: folder.updatedAt
+            }
+        });
+
+    } catch (err) {
+        console.error("Create folder error:", err);
+
+        return res.status(500).json({
+            success: false,
+            message: err.message || "Something went wrong"
+        });
+    }
+};
+
 export const moveFileOrFolder = async (req, res) => {
     const { sourcePath, destinationPath } = req.body;
     const ownerId = req.id.id;
