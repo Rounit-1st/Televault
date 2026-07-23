@@ -274,9 +274,11 @@ const handleDelete = async () => {
         <p className="text-gray-600 text-sm">
           To get instructions for generating your Telegram Bot Token,
           click on{" "}
-          <span className="font-semibold text-blue-600 cursor-pointer underline">
-            Learn More
-          </span>
+          <a href="/learnMore">
+            <span className="font-semibold text-blue-600 cursor-pointer underline">
+              Learn More
+            </span>
+          </a>
         </p>
       </div>
     </div>
