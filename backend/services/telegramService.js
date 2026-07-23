@@ -12,10 +12,26 @@ export const uploadFileToTelegram = async (telegramBotToken, telegramChatId, nam
         if (!response.ok) {
             throw new Error(`Telegram API error: ${response.statusText}`);
         }
+        const responseData = await response.json();
+        console.log("Response:", responseData.result.document.file_id);
+        const fileId = responseData.result.document.file_id;
+        const thumbnailUrl = responseData.result.document
+        console.log(thumbnailUrl)
+        const fileInformationResponse = await fetch(`https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${fileId}`);
 
-        const fileId = response.data.result.document.file_id;
-
-        const 
+        if (!fileInformationResponse.ok) {
+            throw new Error(`Telegram API error: ${fileInformationResponse.statusText}`);
+        }
+        
+        const fileInformationData = await fileInformationResponse.json();
+        const telegramFilePath = fileInformationData.result.file_path;
+        const downloadUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${telegramFilePath}`;
+        
+        return { fileId, filePath: telegramFilePath, downloadUrl }; 
+    }   
+    catch(error){
+        console.error("Error uploading file to Telegram:", error);
+        throw error;
     }   
 
 }
