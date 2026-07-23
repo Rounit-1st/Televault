@@ -1,22 +1,26 @@
-export async function sendLoginCredential(data){
-    const status = await fetch(import.meta.env.VITE_BACKEND_URL+'/login',{
-        method:'POST',
-        body:JSON.stringify(data),
-        headers:{
-            "Content-Type":"application/x-www-form-urlencoded"
+export async function sendLoginCredential(data) {
+    const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        credentials: 'include', // ✅ fixed
+        headers: {
+            "Content-Type": "application/json" // ✅ important
         }
-    })
-    return status;
-    console.log(status)
+    });
+
+    return response;
 }
 
-export async function sendSignInCredential(data){
-    const status = await fetch(import.meta.env.VITE_BACKEND_URL+'/register',{
-        method:'POST',
-        body:JSON.stringify(data),
-        headers:{
-            "Content-Type":"application/x-www-form-urlencoded"
+
+export async function sendSignInCredential(data) {
+    const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/auth/register', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        credentials: 'include', // ✅ keep consistent
+        headers: {
+            "Content-Type": "application/json" // ✅ fixed
         }
-    })
-    return status;
+    });
+
+    return response;
 }

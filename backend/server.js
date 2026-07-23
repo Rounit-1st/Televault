@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import {connectToDatabase} from './config/db.js'
 import authRouter from './routes/Auth.js';
 // import testRouter from './routes/Test.js'
@@ -10,6 +11,10 @@ import fileManageRouter from './routes/fileManage.js';
 
 dotenv.config();
 const app = express();
+app.use(cors({
+    origin: 'http://localhost:5173', // ✅ your frontend URL
+    credentials: true,
+}));
 app.use(cookieParser());
 app.use(express.json());
 

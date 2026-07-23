@@ -1,74 +1,43 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from 'mongoose';;
 
-const FolderSchema = new mongoose.Schema(
-    {
-        name:{
-            type:String,
-            required:true
-        },
-        isFolder:{
-            type:Boolean,
-            required:true
-        },
-        path:{
-            type:String,
-            required:true
-        },
-        owner:{
-             type:mongoose.Schema.Types.ObjectId,
-            ref:'User',
-            required: true
-        },
-        updatedAt: {
-            type:timestamps,
-            required:true
-        }
-    }
-)
+const FileSchema = new mongoose.Schema({
+    name: { type: String, required: true },
 
-const FileSchema = new mongoose.Schema(
-    {
-        name:{
-            type:String,
-            required:true
-        },
-        mimeType:{
-            type:String,
-            required:true
-        },
-        isFolder:{
-            type:Boolean,
-            required:true
-        },
-        downloadURL:{
-            type:URL,
-            required: true
-        },
-        fileId:{
-            type:String,
-            required: true
-        },
-        size:{
-            type:Number,
-            required:true       
-        },
-        owner:{
-            type: mongoose.Schema.Types.ObjectId,
-            ref:'User',
-            required: true
-        },
-        path:{
-            type:String,
-            required:true
-        },
-        updatedAt: {
-            type:timestamps,
-            required:true
-        }
-    }
-)
+    type: {
+        type: String,
+        enum: ['file', 'folder'],
+        required: true
+    },
 
-const Folder = mongoose.model('Folder', FolderSchema) //remember the product name should start with captital letter and must be singular so mongo internall does convert objects into products
-const File = mongoose.model('File', FileSchema)
+    parent: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File',
+        default: null
+    },
 
-export {Folder,File};
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+
+    // file-only fields
+    mimeType: String,
+    path: String,
+    telegramFileId: {
+        type: String,
+        // unique: true,
+        sparse: true
+    },
+    size: Number,
+    downloadURL: String,
+    thumbnailUrl: String
+
+}, { timestamps: true });
+
+FileSchema.index(
+    { name: 1, parent: 1, owner: 1 },
+    { unique: true }
+);
+
+export const File = mongoose.model('File', FileSchema);
