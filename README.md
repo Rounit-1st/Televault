@@ -154,7 +154,7 @@ cd TeleVault
 ## Install Backend
 
 ```bash
-cd server
+cd backend
 
 npm install
 ```
@@ -162,7 +162,7 @@ npm install
 ## Install Frontend
 
 ```bash
-cd client
+cd frontend
 
 npm install
 ```
@@ -174,7 +174,7 @@ npm install
 ### Start Backend
 
 ```bash
-cd server
+cd backend
 
 npm run dev
 ```
@@ -182,7 +182,7 @@ npm run dev
 ### Start Frontend
 
 ```bash
-cd client
+cd frontend
 
 npm start
 ```
